@@ -1,10 +1,12 @@
 <template>
   <div id="touch">
         <div
+          class="touch-wrapper"
           ref="touch"
           @touchstart="touchStart"
           @touchmove="touchMove"
           @touchend="touchEnd"
+          :style="touchWrapperStyle"
         >
           <slot></slot>
         </div>
@@ -185,21 +187,38 @@
       }
     },
 
+    computed: {
+      touchWrapperStyle() {
+        return {
+          transition: `transform 0.3s linear`
+        }
+      }
+    },
+
     props: {
+      // 锁定X轴
       lockX: {
         type: Boolean,
         default: false,
       },
 
+      // 锁定X轴
       lockY: {
         type: Boolean,
         default: false,
       },
 
+      // 是否阻止浏览器默认事件
       preventDefault: {
         type: Boolean,
         default: false,
-      }
+      },
+
+      // 过渡时间
+      ScrollTransitionTime: {
+        type: Number,
+        default: 0,
+      },
     }
   }
 </script>
@@ -209,5 +228,9 @@
     width: 100%;
     height: 100%;
     overflow: hidden;
+  }
+
+  .touch-wrapper {
+    transition: transform 0.3s linear;
   }
 </style>
