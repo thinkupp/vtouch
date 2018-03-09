@@ -1,11 +1,13 @@
 <template>
-  <div id="touch"
-       ref="touch"
-       @touchstart="touchStart"
-       @touchmove="touchMove"
-       @touchend="touchEnd"
-  >
-        <slot></slot>
+  <div id="touch">
+        <div
+          ref="touch"
+          @touchstart="touchStart"
+          @touchmove="touchMove"
+          @touchend="touchEnd"
+        >
+          <slot></slot>
+        </div>
   </div>
 </template>
 
@@ -19,30 +21,32 @@
     },
 
     created() {
-      this.initData();
+
     },
 
     mounted() {
       this.initialize();
-      this.el = this.$slots.default[0].elm;
     },
 
     methods: {
-      initData() {
-        this.touch = {
-          xHasMove: 0,
-          yHasMove: 0,
-          xTemMove: 0,
-          yTemMove: 0,
-          curDirectionX: undefined,
-        };
-      },
-
       initialize() {
         setTimeout(() => {
-          const {t, l} = getOffset(this.$refs.touch);
-          this.touch.initX = this.$refs.touch.offsetTop;
-          this.touch.initY = this.$refs.touch.offsetLeft;
+          const touchEle = this.$refs.touch;
+          const touchEleParent = touchEle.parentNode;
+          this.el = this.$slots.default[0].elm;
+          const {t, l} = getOffset(touchEle);
+
+          this.touch = {
+            xHasMove: 0,
+            yHasMove: 0,
+            xTemMove: 0,
+            yTemMove: 0,
+            curDirectionX: undefined,
+            initX: 0,
+            initY: 0,
+            parentWidth: touchEleParent ? touchEleParent.clientWidth : window.innerWidth,
+            parentHeight: touchEleParent ? touchEleParent.clientHeight : window.innerHeight,
+          }
         }, 0)
       },
 
@@ -122,7 +126,7 @@
 
       moveXToLeft(offset) {
         this.touch.xTemMove = offset;
-        const clientWidth = this.el.clientWidth - window.innerWidth;
+        const clientWidth = this.el.clientWidth - this.touch.parentWidth;
         if(this.touch.xHasMove + offset <= -clientWidth) {
           this.touch.xTemMove = -clientWidth - this.touch.xHasMove;
           this.$emit('x-end')
@@ -141,17 +145,7 @@
 
       moveYtoTop(offset) {
         this.touch.yTemMove = offset;
-        if(this.touch.yHasMove + offset <= this.touch.initY) {
-          this.touch.yTemMove = this.touch.initY - this.touch.yHasMove;
-          console.log(this.touch.yTemMove, this.touch.yHasMove);
-          this.$emit('y-start');
-        }
-        this.move(null, this.touch.yTemMove);
-      },
-
-      moveYtoBottom(offset) {
-        this.touch.yTemMove = offset;
-        const clientHeight = this.el.clientHeight - window.innerHeight;
+        const clientHeight = this.el.clientHeight - this.touch.parentHeight;
         if(this.touch.yHasMove + offset <= -clientHeight) {
           this.touch.yTemMove = -clientHeight - this.touch.yHasMove;
           this.$emit('y-end')
@@ -159,21 +153,35 @@
         this.move(null, this.touch.yTemMove);
       },
 
+      moveYtoBottom(offset) {
+        this.touch.yTemMove = offset;
+        if(this.touch.yHasMove + offset >= this.touch.initY) {
+          this.touch.yTemMove = this.touch.initY - this.touch.yHasMove;
+          this.$emit('y-start');
+        }
+        this.move(null, this.touch.yTemMove);
+      },
+
       moveXToStart() {
-        this.$refs.touch.style[transform] = `0, ${this.touch.yHasMove}, 0`;
+        this.$refs.touch.style[TRANSFORM] = `translate3d(0, ${this.touch.yHasMove}px, 0)`;
         this.touch.xHasMove = 0;
       },
 
       moveXToEnd() {
-
+        const offset = -(this.el.clientWidth - this.touch.parentWidth);
+        this.$refs.touch.style[TRANSFORM] = `translate3d(${offset}px, ${this.touch.yHasMove}px, 0)`;
+        this.touch.xHasMove = offset;
       },
 
       moveYToStart() {
-
+        this.$refs.touch.style[TRANSFORM] = `translate3d(${this.touch.xHasMove}px, 0, 0)`;
+        this.touch.yHasMove = 0;
       },
 
       moveYToEnd() {
-
+        const offset = -(this.el.clientHeight - this.touch.parentHeight);
+        this.$refs.touch.style[TRANSFORM] = `translate3d(${this.touch.xHasMove}px, ${offset}px, 0)`;
+        this.touch.yHasMove = offset;
       }
     },
 
@@ -196,4 +204,10 @@
   }
 </script>
 
-<style scoped></style>
+<style scoped>
+  #touch {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+</style>
