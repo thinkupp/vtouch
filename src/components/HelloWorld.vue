@@ -6,7 +6,7 @@
     <button @click="moveTo(3)">最右部</button>
 
     <div class="moveDemo">
-      <touch ref="touch">
+      <touch ref="touch" :commonSlideTransition="true">
         <div class="touch" ref="touch">
           <p>touchtouchtouchtouchtouchtouchtoucht1232112312312312321E</p>
           <p>touchtouchtouchtouchtouchtouchtoucht1232112312312312321E</p>

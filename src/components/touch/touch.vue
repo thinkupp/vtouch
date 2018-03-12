@@ -35,6 +35,7 @@
           const touchEle = this.$refs.touch;
           const touchEleParent = touchEle.parentNode;
           this.el = this.$slots.default[0].elm;
+          this.needTransition = this.commonSlideTransition;
 
           this.touch = {
             xHasMove: 0,
@@ -197,9 +198,11 @@
 
         const setTimeoutTime = this.ScrollTransitionTime > 0 ? this.ScrollTransitionTime * 1000 : 0;
 
-        this.touch.transitionTimer = setTimeout(() => {
-          this.needTransition = false;
-        }, setTimeoutTime)
+        if(!this.commonSlideTransition) {
+          this.touch.transitionTimer = setTimeout(() => {
+            this.needTransition = false;
+          }, setTimeoutTime)
+        }
       }
     },
 
@@ -214,7 +217,6 @@
             }
           }
         }
-
         return classContent
       },
 
@@ -250,6 +252,12 @@
       ScrollTransitionTime: {
         type: Number,
         default: 0.3,
+      },
+
+      // 普通滑动是否开启过渡效果
+      commonSlideTransition: {
+        typ: Boolean,
+        default: false,
       },
 
       // 自定义样式
