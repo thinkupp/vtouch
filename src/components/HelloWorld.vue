@@ -8,8 +8,8 @@
     <div class="moveDemo">
       <touch ref="touch" :commonSlideTransition="true">
         <div class="touch" ref="touch">
-          <p>touchtouchtouchtouchtouchtouchtoucht1232112312312312321E</p>
-          <p>touchtouchtouchtouchtouchtouchtoucht1232112312312312321E</p>
+          <i style="font-size: 13px">touchtouchtouchtouchtouchtouchtoucht1232112312312312321E1111111111111111111111111</i>
+          <p>touchtouchtouchtouchtouchtouchtoucht123211231231</p>
           <p>touchtouchtouchtouchtouchtouchtoucht1232112312312312321E</p>
           <p>touchtouchtouchtouchtouchtouchtoucht1232112312312312321E</p>
           <p>touchtouchtouchtouchtouchtouchtoucht1232112312312312321E</p>
@@ -80,14 +80,21 @@
 <style scoped>
   #hello {
     /*padding-top: 50px;*/
-    padding: 50px;
+    /*padding: 50px;*/
   }
 
   .touch {
-    width: 500px;
+    display: inline-block;
+    /*width: 500px;*/
     /*height: 500px;*/
     background: #000;
+    font-size: 0;
     color: antiquewhite;
+  }
+
+  p{
+    display: inline-block;
+    font-size: 13px;
   }
 
   .moveDemo {
