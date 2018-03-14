@@ -33,7 +33,7 @@
     methods: {
       initialize() {
         setTimeout(() => {
-          if(JSON.stringify(this.$slots) === '{}') throw new TypeError("没有镶嵌有效DOM！");
+          if(!this.$slots.default) throw new TypeError("没有镶嵌有效DOM！");
 
           const touchEle = this.$refs.touch;
           const touchEleParent = touchEle.parentNode;

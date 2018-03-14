@@ -35,7 +35,13 @@
         @YStart="changeStatus(6)"
         @YEnd="changeStatus(7)"
       >
-
+        <ul class="scrollWrapper">
+          <li
+            v-for="(item, i) in listData"
+            :key="i"
+          >{{item}}
+          </li>
+        </ul>
       </vue-touch>
     </div>
   </div>
