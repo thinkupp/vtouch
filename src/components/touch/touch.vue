@@ -33,7 +33,7 @@
     methods: {
       initialize() {
         setTimeout(() => {
-          if(!this.$slots.default) throw new TypeError("没有镶嵌有效DOM！");
+          if(!this.$slots.default) this.throwError(0);
 
           const touchEle = this.$refs.touch;
           const touchEleParent = touchEle.parentNode;
@@ -46,10 +46,6 @@
             yHasMove: 0,
             xTemMove: 0,
             yTemMove: 0,
-            xHasStart: true,
-            xHasEnd: false,
-            yHasStart: true,
-            yHasEnd: false,
             systemLockX: this.el.clientHeight < this.$refs.vueTouch.clientWidth,
             systemLockY: this.el.clientHeight < this.$refs.vueTouch.clientHeight,
             curDirectionX: undefined,
@@ -65,7 +61,6 @@
         const touch = e.touches[0];
         this.touch.startX = touch.pageX;
         this.touch.startY = touch.pageY;
-        this.touch.init = true;
       },
 
       touchMove(e) {
@@ -178,24 +173,24 @@
       },
 
       toLeft() {
-        if(!this.touch) throw new TypeError("VueTouch组件没有正确的初始化！");
+        if(!this.touch) this.throwError(1);
         this.methodsMove(true, 0);
       },
 
       toRight() {
-        if(!this.touch) throw new TypeError("VueTouch组件没有正确的初始化！");
+        if(!this.touch) this.throwError(1);
         const offset = -(this.el.clientWidth - this.touch.parentWidth);
         this.methodsMove(true, offset)
       },
 
       toTop() {
-        if(!this.touch) throw new TypeError("VueTouch组件没有正确的初始化！");
+        if(!this.touch) this.throwError(1);
         if(!this.touch) return;
         this.methodsMove(false, 0);
       },
 
       toBottom() {
-        if(!this.touch) throw new TypeError("VueTouch组件没有正确的初始化！");
+        if(!this.touch) this.throwError(1);
         const offset = -(this.el.clientHeight - this.touch.parentHeight);
         this.methodsMove(false, offset)
       },
@@ -263,7 +258,15 @@
         this.touch.eventTimer = setTimeout(() => {
           this.$emit(event);
         }, timer)
-      }
+      },
+
+      throwError(type) {
+        let err;
+        if(type === 0) err = '没有镶嵌有效DOM！';
+        if(type === 1) err = "VueTouch组件没有正确的初始化";
+        if(!err) err = `代码Bug，抛出了一个错误的错误类型：${type}`;
+        throw new TypeError(err);
+      },
     },
 
     computed: {
