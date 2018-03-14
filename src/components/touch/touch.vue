@@ -33,8 +33,11 @@
     methods: {
       initialize() {
         setTimeout(() => {
+          if(JSON.stringify(this.$slots) === '{}') throw new TypeError("没有镶嵌有效DOM！");
+
           const touchEle = this.$refs.touch;
           const touchEleParent = touchEle.parentNode;
+
           this.el = this.$slots.default[0].elm;
           this.needTransition = this.commonSlideTransition;
 
@@ -59,11 +62,6 @@
       },
 
       touchStart(e) {
-        if(!this.el) {
-          new TypeError(`${this.el} 不是一个有效的DOM元素`);
-          return;
-        }
-
         const touch = e.touches[0];
         this.touch.startX = touch.pageX;
         this.touch.startY = touch.pageY;
@@ -180,19 +178,24 @@
       },
 
       toLeft() {
+        if(!this.touch) throw new TypeError("VueTouch组件没有正确的初始化！");
         this.methodsMove(true, 0);
       },
 
       toRight() {
+        if(!this.touch) throw new TypeError("VueTouch组件没有正确的初始化！");
         const offset = -(this.el.clientWidth - this.touch.parentWidth);
         this.methodsMove(true, offset)
       },
 
       toTop() {
+        if(!this.touch) throw new TypeError("VueTouch组件没有正确的初始化！");
+        if(!this.touch) return;
         this.methodsMove(false, 0);
       },
 
       toBottom() {
+        if(!this.touch) throw new TypeError("VueTouch组件没有正确的初始化！");
         const offset = -(this.el.clientHeight - this.touch.parentHeight);
         this.methodsMove(false, offset)
       },
