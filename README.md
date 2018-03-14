@@ -1,111 +1,129 @@
-# touch
+# VueTouch
 
-> 基于vue的移动端触屏滑动方案
+> 基于vue的移动端滑动方案。
 
-## 安装
+------
+## 什么是 vueTouch
 
-``` bash
-# install dependencies
-npm install
+vueTouch 处理移动端的滑动事件
 
-# serve with hot reload at localhost:8080
-npm run dev
+- [x] 可锁定方向，禁止横轴或者纵轴滑动
+- [x] 上下左右滑到边界时事件派发
 
-# build for production with minification
-npm run build
+### 安装
+```bash
+npm install vueTouch --save
 ```
 
-### 使用说明：
-```
-import Vue from 'vue';
-import Touch from 'vueTouch';
+```bash
+import Vue from "vue";
+import vueTouch from "vueTouch";
 Vue.use(vueTouch);
-
 ```
-> 注意：
-    被包裹的盒子如果是块级盒子，需要设置宽高，否则无法滚动。
-    如果是行内块级或者行内元素，宽度会被内容撑开，所以无需设置。
 
-### 关于滚动区域
-可以直接给 touch 组件传递一个 diyStyle 属性来设置滚动区域的大小，注意要设置 overflow：hidden；
-```
+### 在指定区域内滑动
+* 通过设置自定义样式使用，注意不要忘记添加 overflow 属性
+```bash
 <template>
-    <vue-touch :diyStyle="diyStyle"></vue-touch>
+    <vue-touch :diyStyle="diyStyle">
+        <div class="scrollWrapper"></div>  // 滚动的盒子
+    </vue-touch>
 </template>
 
 <script>
+    import vueTouch from 'vueTouch'
     export default {
         data() {
-            return {
-                diyStyle: {
-                    width: '100px',
-                    height: '100px',
-                    overflow: 'hidden'
-                }
+          return {
+            diyStyle: {
+              width: '100px',
+              height: '100px',
+              overflow: 'hidden'
             }
+          }
+        },
+
+        components: {
+            vueTouch
         }
     }
 </script>
 ```
-也可以用一个新的盒子包裹 touch 组件。
+* 通过外层再加一个盒子使用
+```bash
+<template>
+    <div id="touchWrapper">
+        <vue-touch>
+            <div class="scrollWrapper"></div>  // 滚动的盒子
+        </vue-touch>
+    </div>
+</template>
+
+<style scoped>
+  #touchWrapper {
+    width: 100px;
+    height: 200px;
+    overflow: hidden;
+  }
+</style>
 ```
-<div id="testDemo">
-    <vue-touch />
-</div>
+
+> 注意一：建议组件包裹起来的盒子有且只有一个
+
+* 正确的写法：
 ```
-不传递 diyStyle 属性的情况下，组件默认继承包裹 touch 组件的那个盒子的宽高。
-例子：
+<template>
+    <div id="out">
+        <vue-touch>
+            <div class="scrollWrapper">……</div>
+        </vue-touch>
+    </div>
+</template>
 ```
-<div id="out">
-    <vue-touch></vue-touch>
-</div>
+* 错误的写法
 ```
-——这时候滚动区域的大小就是id为 out 的这个DOM的宽高
+<template>
+    <div id="out">
+        <vue-touch>
+            <div class="scrollWrapper">……</div>
+            <div class="any">……</div>
+            ……
+        </vue-touch>
+    </div>
+</template>
+```
+
+> 注意二：要滚动的盒子必须满足以下任意一个要求(比如上方类名为 scrollWrapper 的盒子)：
+            1、设置了宽高
+            1、设置为行内或者行内块级元素让其宽度由内容撑开
+
 ### 配置
-```
-lockX: Boolean -> 锁定横轴，禁止滚动，默认 false；
 
-lockY: Boolean -> 锁定纵轴，禁止滚动，默认 false；
+| 属性名     | 描述   |  类型  |  默认值  |
+| --------   | :----:  | :----:  | :----:  |
+| lockX     | 锁定横轴，禁止滚动 |   Boolean     |   false     |
+| lockY        |   锁定纵轴，禁止滚动   |   Boolean     |   false   |
+| preventDefault        |   在滑动时阻止默认事件   |   Boolean     |   false   |
+| scrollTransitionTime        |   滑动过渡时间   |   Number     |   0.3S   |
+| commonSlideTransition        |   滑动时是否开启过渡效果   |    Boolean     |  false   |
+| diyStyle        |   包裹滚动区域盒子的样式   |   Object     |   {}   |
 
-preventDefault：Boolean -> 在滑动的时候阻止浏览器的默认行为，默认 false；
-
-ScrollTransitionTime：Number -> 调用封装方法时候盒子滚动的过渡时间，默认 0.3s；
-
-commonSlideTransition: Boolean -> 滑动时是否有过渡效果，默认 false；
-
-diyStyle：Object -> 包裹滚动盒子的盒子样式，默认 {} (此时的样式是宽高100%，溢出隐藏)
-```
+> 说一下 commonSlideTransition，默认的过渡效果只触发在对外封装的方法中生效，如果要在正常的滑动中也添加过渡效果，修改这个属性即可。
 
 ### 封装的方法
-```
-toLeft() -> 让盒子滚动到横轴起始位置；
-
-toRight() -> 让盒子滚动到横轴末尾；
-
-toTop() -> 让盒子滚动到纵轴起始位置；
-
-toBottom() -> 让盒子滚动到纵轴末尾；
-```
-具体可以参考Demo。
+| 方法名     | 描述   |
+| :----:   | :----:  |
+| toLeft     | 滚动到横轴起始的位置 |
+| toRight        |   滚动到横轴末尾处   |
+| toTop        |   滚动到纵轴起始的位置   |
+| toBottom        |   滚动到纵轴末尾处   |
+> 过渡效果默认只在调用这几个方法的时候生效，如果要在正常的滑动中也生效，修改配置属性 commonSlideTransition
 
 ### 观察者模式
-```
-x-start: 当滑动到横轴起始位置时触发此事件；
-
-x-end: 当滑动到横轴末尾时触发此事件；
-
-y-start: 当滑动到纵轴起始位置时触发此事件；
-
-y-end: 当滑动到纵轴末尾时触发此事件；
-```
-例子：
-```
-<vue-touch
-    @x-start="xStart"
-    @x-end="xEnd"
-    @y-start="yStart"
-    @y-end="yEnd"
-/>
-```
-可以根据这几个派发的事件做一些更多的扩展，比如上拉刷新、下拉加载等。
-
+| 派发的事件     | 描述   |
+| :----:   | :----:  |
+| x-start     | 横轴方向移动到起始位置时触发 |
+| x-end        |   横轴方向移动到末尾时触发   |
+| y-start        |   纵轴方向移动到起始位置时触发   |
+| y-end        |   纵轴方向移动到末尾时触发   |
+> 可以利用这几个事件进行一些扩展的行为，比如上拉加载、下拉刷新等
