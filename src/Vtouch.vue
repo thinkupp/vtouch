@@ -14,8 +14,7 @@
 </template>
 
 <script>
-  import { prefixStyle } from "../utils";
-
+  import { prefixStyle } from "./components/utils";
 
   const TRANSFORM = prefixStyle('transform');
 
@@ -59,8 +58,8 @@
 
       touchStart(e) {
         const touch = e.touches[0];
-        this.touch.startX = touch.pageX;
-        this.touch.startY = touch.pageY;
+        this.touch.startX = Vtouch.pageX;
+        this.touch.startY = Vtouch.pageY;
       },
 
       touchMove(e) {
@@ -72,8 +71,8 @@
         }
 
         const touch = e.touches[0];
-        let offsetX = touch.pageX - this.touch.startX;
-        let offsetY = touch.pageY - this.touch.startY;
+        let offsetX = Vtouch.pageX - this.touch.startX;
+        let offsetY = Vtouch.pageY - this.touch.startY;
 
         if (!this.touch.hasMove) {
           if (Math.abs(offsetX) > Math.abs(offsetY)) {

@@ -1,7 +1,5 @@
-import Vue from 'vue'
-import App from './App.vue'
+import VTouch from './Vtouch'
 
-new Vue({
-  el: '#app',
-  render: h => h(App)
-})
+export default VTouch;
+
+if(typeof window !== undefined && window.Vue) window.Vue.component('v-touch', VTouch);

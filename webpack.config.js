@@ -1,12 +1,15 @@
-var path = require('path')
-var webpack = require('webpack')
+var path = require('path');
+var webpack = require('webpack');
 
 module.exports = {
   entry: './src/main.js',
   output: {
     path: path.resolve(__dirname, './dist'),
     publicPath: '/dist/',
-    filename: 'build.js'
+    filename: 'v-touch.min.js',
+    library: 'VTouch',
+    libraryTarget: 'umd',
+    umdNamedDefine: true
   },
   module: {
     rules: [
