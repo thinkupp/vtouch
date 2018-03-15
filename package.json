@@ -33,7 +33,7 @@
   "main": "dis/v-touch.min.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/thinkupp/touch.git"
+    "url": "git+https://github.com/thinkupp/vtouch.git"
   },
   "keywords": [
     "vue",
@@ -41,7 +41,7 @@
     "move"
   ],
   "bugs": {
-    "url": "https://github.com/thinkupp/touch/issues"
+    "url": "https://github.com/thinkupp/vtouch/issues"
   },
-  "homepage": "https://github.com/thinkupp/touch#readme"
+  "homepage": "https://github.com/thinkupp/vtouch#readme"
 }
