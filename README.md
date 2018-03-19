@@ -1,4 +1,4 @@
-# VueTouch
+# uppTouch
 
 > 基于vue的移动端滑动方案。
 

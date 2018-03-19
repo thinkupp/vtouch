@@ -1,5 +1,5 @@
 {
-  "name": "vtouch",
+  "name": "upp-touch",
   "description": "基于vue触屏滑动方案",
   "version": "1.0.0",
   "author": "thinkupp <thexwant@gmail.com>",
@@ -30,15 +30,15 @@
     "webpack": "^3.6.0",
     "webpack-dev-server": "^2.9.1"
   },
-  "main": "dis/v-touch.min.js",
+  "main": "dist/v-touch.min.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/thinkupp/vtouch.git"
   },
   "keywords": [
-    "vue",
     "touch",
-    "move"
+    "move",
+    "vue-touch",
   ],
   "bugs": {
     "url": "https://github.com/thinkupp/vtouch/issues"

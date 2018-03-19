@@ -1,5 +1,5 @@
 <template>
-  <div id="vue-touch" ref="vueTouch" :style="touchClass">
+  <div id="upp-touch" ref="uppTouch" :style="touchClass">
     <div
       class="touch-wrapper"
       ref="touch"
@@ -45,8 +45,8 @@
             yHasMove: 0,
             xTemMove: 0,
             yTemMove: 0,
-            systemLockX: this.el.clientHeight < this.$refs.vueTouch.clientWidth,
-            systemLockY: this.el.clientHeight < this.$refs.vueTouch.clientHeight,
+            systemLockX: this.el.clientHeight < this.$refs.uppTouch.clientWidth,
+            systemLockY: this.el.clientHeight < this.$refs.uppTouch.clientHeight,
             curDirectionX: undefined,
             initX: 0,
             initY: 0,
@@ -58,8 +58,8 @@
 
       touchStart(e) {
         const touch = e.touches[0];
-        this.touch.startX = Vtouch.pageX;
-        this.touch.startY = Vtouch.pageY;
+        this.touch.startX = touch.pageX;
+        this.touch.startY = touch.pageY;
       },
 
       touchMove(e) {
@@ -71,8 +71,8 @@
         }
 
         const touch = e.touches[0];
-        let offsetX = Vtouch.pageX - this.touch.startX;
-        let offsetY = Vtouch.pageY - this.touch.startY;
+        let offsetX = touch.pageX - this.touch.startX;
+        let offsetY = touch.pageY - this.touch.startY;
 
         if (!this.touch.hasMove) {
           if (Math.abs(offsetX) > Math.abs(offsetY)) {
@@ -262,7 +262,7 @@
       throwError(type) {
         let err;
         if(type === 0) err = '没有镶嵌有效DOM！';
-        if(type === 1) err = "VueTouch组件没有正确的初始化";
+        if(type === 1) err = "uppTouch没有正确的初始化";
         if(!err) err = `代码Bug，抛出了一个错误的错误类型：${type}`;
         throw new TypeError(err);
       },
@@ -334,9 +334,5 @@
 </script>
 
 <style scoped>
-  #vue-touch {
-  }
 
-  .touch-wrapper {
-  }
 </style>
