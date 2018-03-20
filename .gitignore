@@ -2,6 +2,7 @@
 node_modules/
 demo/
 demo
+
 npm-debug.log
 yarn-error.log
 
