@@ -1,7 +1,7 @@
 {
   "name": "upp-touch",
   "description": "基于vue触屏滑动方案",
-  "version": "1.0.3",
+  "version": "1.0.9",
   "author": "thinkupp <thexwant@gmail.com>",
   "license": "MIT",
   "private": false,

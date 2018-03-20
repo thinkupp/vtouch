@@ -1,10 +1,10 @@
-# uppTouch
+# upp-touch
 > 基于vue的移动端滑动方案。
 
 
 ------
 
-## 什么是 uppTouch
+## 什么是 upp-touch
 uppTouch 处理移动端的滑动事件
 
 - [x] 可锁定方向，禁止横轴或者纵轴滑动
@@ -16,7 +16,7 @@ uppTouch 处理移动端的滑动事件
 
 ### 安装
 ```bash
-npm install uppTouch --save
+npm install upp-touch --save
 ```
 
 ### 在指定区域内滑动
@@ -29,7 +29,7 @@ npm install uppTouch --save
 </template>
 
 <script>
-    import uppTouch from 'uppTouch'
+    import uppTouch from 'upp-touch'
 
     export default {
         data() {
