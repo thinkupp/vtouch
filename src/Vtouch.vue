@@ -14,9 +14,11 @@
 </template>
 
 <script>
-  import { prefixStyle } from "./components/utils";
+  import { prefixStyle } from "./js/utils";
 
   const TRANSFORM = prefixStyle('transform');
+
+  import * as UPP_TOUCH_EVENTS from './js/events'
 
   export default {
     data() {
@@ -52,6 +54,8 @@
             initY: 0,
             parentWidth: touchEleParent ? touchEleParent.clientWidth : window.innerWidth,
             parentHeight: touchEleParent ? touchEleParent.clientHeight : window.innerHeight,
+            xLastDistance: 0,
+            yLastDistance: 0,
           };
         }, 0)
       },
@@ -60,6 +64,8 @@
         const touch = e.touches[0];
         this.touch.startX = touch.pageX;
         this.touch.startY = touch.pageY;
+        this.touch.xMoving = false;
+        this.touch.yMoving = false;
       },
 
       touchMove(e) {
@@ -98,6 +104,8 @@
         this.touch.hasMove = false;
         this.touch.directionX = false;
         this.touch.directionY = false;
+        this.touch.xMoving = false;
+        this.touch.yMoving = false;
         this.touch.curDirectionX = undefined;
         this.touch.xHasMove += this.touch.xTemMove;
         this.touch.yHasMove += this.touch.yTemMove;
@@ -123,14 +131,25 @@
 
       move(x, distance) {
         if(!distance) return;
+
+        x ? this.touch.xMoving = true : this.touch.yMoving = true;
         this.needTransition = this.commonSlideTransition;
+
+        let total, _x, _y, _event;
         if (x) {
-          distance = this.touch.xHasMove + distance;
-          this.$refs.touch.style[TRANSFORM] = `translate3d(${distance}px, ${this.touch.yHasMove}px, 0)`;
-          return;
+          _x = total = this.touch.xHasMove + distance;
+          _y = this.touch.yHasMove;
+          _event = this.touch.xLastDistance > distance ? UPP_TOUCH_EVENTS.LEFT_MOVING : UPP_TOUCH_EVENTS.RIGHT_MOVING;
+          this.touch.xLastDistance = distance;
+        } else {
+          _x = this.touch.xHasMove;
+          _y = total = this.touch.yHasMove + distance;
+          _event = this.touch.yLastDistance > distance ? UPP_TOUCH_EVENTS.TOP_MOVING : UPP_TOUCH_EVENTS.BOTTOM_MOVING;
+          this.touch.yLastDistance = distance;
         }
-        distance = this.touch.yHasMove + distance;
-        this.$refs.touch.style[TRANSFORM] = `translate3d(${this.touch.xHasMove}px, ${distance}px, 0)`;
+
+        this.$emit(_event, total);
+        this.$refs.touch.style[TRANSFORM] = `translate3d(${_x}px, ${_y}px, 0)`;
       },
 
       moveXToLeft(offset) {
@@ -184,7 +203,6 @@
 
       toTop() {
         if(!this.touch) this.throwError(1);
-        if(!this.touch) return;
         this.methodsMove(false, 0);
       },
 
@@ -199,14 +217,13 @@
 
         this.needTransition = true;
 
+        let _x, _y;
+        _x = x ? offset : this.touch.xHasMove;
+        _y = x ? this.touch.yHasMove : offset;
+
         setTimeout(() => {
-          if (x) {
-            this.$refs.touch.style[TRANSFORM] = `translate3d(${offset}px, ${this.touch.yHasMove}px, 0)`;
-            this.touch.xHasMove = offset;
-          } else {
-            this.$refs.touch.style[TRANSFORM] = `translate3d(${this.touch.xHasMove}px, ${offset}px, 0)`;
-            this.touch.yHasMove = offset;
-          }
+          this.$refs.touch.style[TRANSFORM] = `translate3d(${_x}px, ${_y}px, 0)`;
+          x ? this.touch.xHasMove = offset :this.touch.yHasMove = offset;
         }, 0);
 
         const setTimeoutTime = this.scrollTransitionTime > 0 ? this.scrollTransitionTime * 1000 : 0;
@@ -214,45 +231,44 @@
          this.touch.transitionTimer = setTimeout(() => {
            this.needTransition = false;
          }, setTimeoutTime)
-
       },
 
       dispatch(type) {
         clearTimeout(this.touch.eventTimer);
         let event, needTransition = true;
         if(type === 0) {
-          event = 'x-start';
-          if(!this.touch.xTemMove) {
-            event = 'XStart';
+          event = UPP_TOUCH_EVENTS.X_IS_START;
+          if(!this.touch.xTemMove && !this.touch.xMoving) {
+            event = UPP_TOUCH_EVENTS.X_HAS_START;
             needTransition = false;
           }
         }
 
         if(type === 1) {
-          event = 'x-end';
-          if(!this.touch.xTemMove) {
-            event = 'XEnd';
+          event = UPP_TOUCH_EVENTS.X_IS_END;
+          if(!this.touch.xTemMove && !this.touch.xMoving) {
+            event = UPP_TOUCH_EVENTS.X_HAS_END;
             needTransition = false;
           }
         }
 
         if(type === 2) {
-          event = 'y-start';
-          if(!this.touch.yTemMove) {
-            event = 'YStart';
+          event = UPP_TOUCH_EVENTS.Y_IS_START;
+          if(!this.touch.yTemMove && !this.touch.yMoving) {
+            event = UPP_TOUCH_EVENTS.Y_HAS_START;
             needTransition = false;
           }
         }
 
         if(type === 3) {
-          event = 'y-end';
-          if(!this.touch.yTemMove) {
-            event = 'YEnd';
+          event = UPP_TOUCH_EVENTS.Y_IS_END;
+          if(!this.touch.yTemMove && !this.touch.yMoving) {
+            event = UPP_TOUCH_EVENTS.Y_HAS_END;
             needTransition = false;
           }
         }
 
-        if(!event) return;
+        if(!event) this.throwError();
         const timer = this.needTransition ? needTransition ? this.scrollTransitionTime * 1000 : 0 : 0;
         this.touch.eventTimer = setTimeout(() => {
           this.$emit(event);
