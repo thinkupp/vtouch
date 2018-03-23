@@ -81,6 +81,7 @@
         let offsetY = touch.pageY - this.touch.startY;
 
         if (!this.touch.hasMove) {
+          this.touch.hasMove = true;
           if (Math.abs(offsetX) > Math.abs(offsetY)) {
             this.touch.directionX = true;
             if (this.touch.curDirectionX === undefined) this.touch.curDirectionX = true;
@@ -90,7 +91,6 @@
             if (this.touch.curDirectionX === undefined) this.touch.curDirectionX = false;
             if (this.lockY || this.touch.systemLockY) return;
           }
-          this.touch.hasMove = true;
         }
 
         if (this.touch.curDirectionX) {
@@ -101,6 +101,7 @@
       },
 
       touchEnd() {
+        this.$emit('touchEnd');
         this.touch.hasMove = false;
         this.touch.directionX = false;
         this.touch.directionY = false;
@@ -131,6 +132,8 @@
 
       move(x, distance) {
         if(!distance) return;
+        if(x && this.lockX || x && this.touch.systemLockX) return;
+        if(!x && this.lockY || !x && this.touch.systemLockY) return;
 
         x ? this.touch.xMoving = true : this.touch.yMoving = true;
         this.needTransition = this.commonSlideTransition;
@@ -157,7 +160,7 @@
         const clientWidth = this.el.clientWidth - this.touch.parentWidth;
         if (this.touch.xHasMove + offset <= -clientWidth) {
           this.touch.xTemMove = -clientWidth - this.touch.xHasMove;
-          this.dispatch(1);
+          this.dispatch(1, offset);
         }
         this.move(true, this.touch.xTemMove);
       },
@@ -166,7 +169,7 @@
         this.touch.xTemMove = offset;
         if (this.touch.xHasMove + offset >= this.touch.initX) {
           this.touch.xTemMove = this.touch.initX - this.touch.xHasMove;
-          this.dispatch(0);
+          this.dispatch(0, offset);
         }
         this.move(true, this.touch.xTemMove);
       },
@@ -176,7 +179,7 @@
         const clientHeight = this.el.clientHeight - this.touch.parentHeight;
         if (this.touch.yHasMove + offset <= -clientHeight) {
           this.touch.yTemMove = -clientHeight - this.touch.yHasMove;
-          this.dispatch(3);
+          this.dispatch(3, offset);
         }
         this.move(null, this.touch.yTemMove);
       },
@@ -185,7 +188,7 @@
         this.touch.yTemMove = offset;
         if (this.touch.yHasMove + offset >= this.touch.initY) {
           this.touch.yTemMove = this.touch.initY - this.touch.yHasMove;
-          this.dispatch(2);
+          this.dispatch(2, offset);
         }
         this.move(null, this.touch.yTemMove);
       },
@@ -233,7 +236,7 @@
          }, setTimeoutTime)
       },
 
-      dispatch(type) {
+      dispatch(type, offset) {
         clearTimeout(this.touch.eventTimer);
         let event, needTransition = true;
         if(type === 0) {
@@ -271,7 +274,7 @@
         if(!event) this.throwError();
         const timer = this.needTransition ? needTransition ? this.scrollTransitionTime * 1000 : 0 : 0;
         this.touch.eventTimer = setTimeout(() => {
-          this.$emit(event);
+          needTransition ? this.$emit(event) : this.$emit(event, offset);
         }, timer)
       },
 
